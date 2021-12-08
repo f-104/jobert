@@ -1,14 +1,13 @@
 ############################################
 ## Work in progress - extraneous comments ##
 ## will be removed soon                   ##
+## Jobert is a product of Benjamin Peretz ##
 ############################################
 
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 import os
-
-from sqlalchemy.orm import backref
 
 # Init app
 app = Flask(__name__)
