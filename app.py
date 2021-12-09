@@ -78,7 +78,7 @@ def add_job():
     db.session.add(new_job)
     db.session.commit()
 
-    return job_schema.jsonify(new_job)
+    return job_schema.jsonify(new_job), 201
 
 # Create a Query
 @app.route('/query', methods=['POST'])
@@ -94,7 +94,7 @@ def add_query():
     db.session.add(new_query)
     db.session.commit()
 
-    return query_schema.jsonify(new_query)
+    return query_schema.jsonify(new_query), 201
 
 # Get all jobs
 @app.route('/job', methods=['GET'])
@@ -104,26 +104,26 @@ def get_jobs():
     else:
         all_jobs = Job.query.all()
     result = jobs_schema.dump(all_jobs)
-    return jsonify(result)
+    return jsonify(result), 200
 
 # Get all queries
 @app.route('/query', methods=['GET'])
 def get_queries():
     all_queries = Query.query.all()
     result = queries_schema.dump(all_queries)
-    return jsonify(result)
+    return jsonify(result), 200
 
 # Get single job
 @app.route('/job/<id>', methods=['GET'])
 def get_job(id):
     job = Job.query.get(id)
-    return job_schema.jsonify(job)
+    return job_schema.jsonify(job), 200
 
 # Get single query
 @app.route('/query/<id>', methods=['GET'])
 def get_query(id):
     query = Query.query.get(id)
-    return query_schema.jsonify(query)
+    return query_schema.jsonify(query), 200
 
 # Update a job
 @app.route('/job/<id>', methods=['PUT'])
@@ -146,7 +146,7 @@ def update_job(id):
 
     db.session.commit()
 
-    return job_schema.jsonify(job)
+    return job_schema.jsonify(job), 200
 
 # Update a query
 @app.route('/query/<id>', methods=['PUT'])
@@ -167,7 +167,7 @@ def update_query(id):
 
     db.session.commit()
 
-    return query_schema.jsonify(query)
+    return query_schema.jsonify(query), 200
 
 # Delete a job
 @app.route('/job/<id>', methods=['DELETE'])
@@ -176,7 +176,7 @@ def delete_job(id):
     db.session.delete(job)
     db.session.commit()
 
-    return job_schema.jsonify(job)
+    return job_schema.jsonify(job), 200
 
 # Delete a query
 @app.route('/query/<id>', methods=['DELETE'])
@@ -185,7 +185,7 @@ def delete_query(id):
     db.session.delete(query)
     db.session.commit()
 
-    return query_schema.jsonify(query)
+    return query_schema.jsonify(query), 200
 
 # Run server
 if __name__ == '__main__':
