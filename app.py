@@ -1,7 +1,5 @@
 ############################################
-## Work in progress - extraneous comments ##
-## will be removed soon                   ##
-## Jobert is a product of Benjamin Peretz ##
+########      Work in progress      ########
 ############################################
 
 from flask import Flask, request, jsonify
@@ -13,7 +11,7 @@ import os
 app = Flask(__name__)
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-# Database
+# Database - Change to MySQL/MariaDB
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'db.sqlite')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -31,15 +29,6 @@ class Query(db.Model):
     state = db.Column(db.String(2))
     radius = db.Column(db.String(2))
     entryLevel = db.Column(db.Boolean())
-    #jobs = db.relationship('Job', backref='query', lazy=True) # Does this need to be in init and schema? # put under class Job for now
-    
-    # Okay, it looks like maybe init is taken care of in this version of Flask
-    #  def __init__(self, term, city, state, radius, entryLevel):
-    #      self.term = term
-    #      self.city = city
-    #      self.state = state
-    #      self.radius = radius
-    #      self.entryLevel = entryLevel
 
     def __repr__(self):
         return '<Query %r>' % self.id
@@ -52,20 +41,11 @@ class Job(db.Model):
     city = db.Column(db.String(100), nullable=False)
     state = db.Column(db.String(100), nullable=False)
     href = db.Column(db.String(100), nullable=False)
-    query = db.relationship('Query', backref=db.backref('jobs', lazy=True))
+    query_rel = db.relationship('Query', backref=db.backref('jobs', lazy=True))
     query_id = db.Column(db.Integer, db.ForeignKey('query.id'), nullable=False)
 
     def __repr__(self):
         return '<Job %r>' % self.title
-
-    # See line 32
-    # def __init__(self, title, company, city, state, href, query_id):
-    #     self.title = title
-    #     self.company = company
-    #     self.city = city
-    #     self.state = state
-    #     self.href = href
-    #     self.query_id = query_id
 
 # Query Schema
 class QuerySchema(ma.Schema):
@@ -93,7 +73,7 @@ def add_job():
     href = request.json['href']
     query_id = request.json['query_id']
 
-    new_job = Job(title, company, city, state, href, query_id)
+    new_job = Job(title=title, company=company, city=city, state=state, href=href, query_id=query_id)
 
     db.session.add(new_job)
     db.session.commit()
@@ -109,26 +89,20 @@ def add_query():
     radius = request.json['radius']
     entryLevel = request.json['entryLevel']
 
-    new_query = Job(term, city, state, radius, entryLevel)
+    new_query = Query(term=term, city=city, state=state, radius=radius, entryLevel=entryLevel)
 
     db.session.add(new_query)
     db.session.commit()
 
-    return job_schema.jsonify(new_query)
-
-# testing
-# /j?term=software+engineer&city=bethpage+ny
-# '+' replaced with blank spaces
-#@app.route('/j', methods=['GET'])
-#def testing():
-#    term = request.args['term']
-#    city = request.args['city']
-#    return jsonify({"term": term, "city": city})
+    return query_schema.jsonify(new_query)
 
 # Get all jobs
 @app.route('/job', methods=['GET'])
 def get_jobs():
-    all_jobs = Job.query.all()
+    if qid := request.args.get('query_id'):
+        all_jobs = Job.query.filter_by(query_id=qid)
+    else:
+        all_jobs = Job.query.all()
     result = jobs_schema.dump(all_jobs)
     return jsonify(result)
 
@@ -175,7 +149,7 @@ def update_job(id):
     return job_schema.jsonify(job)
 
 # Update a query
-@app.route('/query/<id>', methods=['PUT']) #'term', 'city', 'state', 'radius', 'entryLevel'
+@app.route('/query/<id>', methods=['PUT'])
 def update_query(id):
     query = Query.query.get(id)
 
@@ -193,7 +167,7 @@ def update_query(id):
 
     db.session.commit()
 
-    return job_schema.jsonify(query)
+    return query_schema.jsonify(query)
 
 # Delete a job
 @app.route('/job/<id>', methods=['DELETE'])
@@ -211,7 +185,7 @@ def delete_query(id):
     db.session.delete(query)
     db.session.commit()
 
-    return job_schema.jsonify(query)
+    return query_schema.jsonify(query)
 
 # Run server
 if __name__ == '__main__':
