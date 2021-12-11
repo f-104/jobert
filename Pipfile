@@ -8,6 +8,10 @@ flask = "*"
 flask-sqlalchemy = "*"
 flask-marshmallow = "*"
 marshmallow-sqlalchemy = "*"
+requests = "*"
+bs4 = "*"
+selenium = "*"
+lxml = "*"
 
 [dev-packages]
 autopep8 = "*"
