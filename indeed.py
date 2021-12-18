@@ -1,7 +1,9 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.support import expected_conditions as EC
 
 from bs4 import BeautifulSoup as bs
 import sys
@@ -11,8 +13,9 @@ from helpers import HttpHelpers
 options = webdriver.ChromeOptions()
 options.add_argument('--ignore-certificate-errors')
 options.add_argument("--test-type")
-#options.add_argument('headless') (commented out during development)
+#options.add_argument('headless')
 options.add_experimental_option('excludeSwitches', ['enable-logging'])
+options.add_argument("--disable-extensions")
 
 class iJobs:
     def __init__(self, city, entryLevel, id, radius, state, term):
@@ -30,8 +33,8 @@ class iJobs:
 
         def checkPopup():
             try:
-                closePopup = driver.find_element(By.XPATH, '//*[@id="popover-x"]/button')
-                closePopup.click()
+                closePopup = driver.find_element(By.XPATH, '/html/body/div[5]/div[1]/button')
+                WebDriverWait(driver, 3).until(EC.element_to_be_clickable(closePopup)).click()
             except NoSuchElementException:
                 pass
 
@@ -112,17 +115,14 @@ class iJobs:
             # Clean data
             title_elem = title_elem_raw.text.strip()[3:]
             company_elem = company_elem_raw.text.strip()
-            cityState = loc_elem_raw.text.strip().split(',')
-            city_elem = cityState[0].strip()
-            state_elem = cityState[1].strip()
+            loc_elem = loc_elem_raw.text.strip()
             url_elem = f'https://indeed.com{url_elem_raw}'
 
             # Append job to list as dictionary
             item = {
                 "title": title_elem,
                 "company": company_elem,
-                "city": city_elem,
-                "state": state_elem,
+                "location": loc_elem,
                 "href": url_elem,
                 "query_id": self.id
             }

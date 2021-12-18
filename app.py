@@ -1,7 +1,3 @@
-############################################
-########      Work in progress      ########
-############################################
-
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
@@ -38,8 +34,7 @@ class Job(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
     company = db.Column(db.String(100), nullable=False)
-    city = db.Column(db.String(100), nullable=False)
-    state = db.Column(db.String(100), nullable=False)
+    location = db.Column(db.String(100), nullable=False)
     href = db.Column(db.String(100), nullable=False)
     query_rel = db.relationship('Query', backref=db.backref('jobs', lazy=True))
     query_id = db.Column(db.Integer, db.ForeignKey('query.id'), nullable=False)
@@ -50,12 +45,12 @@ class Job(db.Model):
 # Query Schema
 class QuerySchema(ma.Schema):
     class Meta:
-        fields = ('id', 'term', 'city', 'state', 'radius', 'entryLevel') # does jobs relationship need to be here?
+        fields = ('id', 'term', 'city', 'state', 'radius', 'entryLevel')
 
 # Job Schema
 class JobSchema(ma.Schema):
     class Meta:
-        fields = ('id', 'title', 'company', 'city', 'state', 'href', 'query_id')
+        fields = ('id', 'title', 'company', 'location', 'href', 'query_id')
 
 # Init schema
 query_schema = QuerySchema()
@@ -68,12 +63,11 @@ jobs_schema = JobSchema(many=True)
 def add_job():
     title = request.json['title']
     company = request.json['company']
-    city = request.json['city']
-    state = request.json['state']
+    location = request.json['location']
     href = request.json['href']
     query_id = request.json['query_id']
 
-    new_job = Job(title=title, company=company, city=city, state=state, href=href, query_id=query_id)
+    new_job = Job(title=title, company=company, location=location, href=href, query_id=query_id)
 
     db.session.add(new_job)
     db.session.commit()
@@ -132,15 +126,13 @@ def update_job(id):
 
     title = request.json['title']
     company = request.json['company']
-    city = request.json['city']
-    state = request.json['state']
+    location = request.json['location']
     href = request.json['href']
     query_id = request.json['query_id']
 
     job.title = title
     job.company = company
-    job.city = city
-    job.state = state
+    job.location = location
     job.href = href
     job.query_id = query_id
 

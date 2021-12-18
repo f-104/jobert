@@ -13,4 +13,5 @@ jobs_list_test = indeed.iJobs(**test_query).get()
 
 for job in jobs_list_test:
     print(f'Sending:\n{job}')
-    send_job = requests.post(base_url+"job", job)
+    full_url = base_url + "job"
+    send_job = requests.post(full_url, json=job)
