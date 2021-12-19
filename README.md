@@ -73,7 +73,7 @@ With all desired queries in the database and `app.py` running, simply run `scrap
 - [X] Give error if incorrect radius in a query
 - [ ] Switch from Flask-SQLAlchemy to Flask and SQLAlchemy
 - [ ] Switch from SQLite to MySQL for production
-- [ ] Address webscraping failure when using `headless` option for Selenium
+- [X] Address webscraping failure when using `headless` option for Selenium
 - [ ] Add support for other job listing websites
     - [ ] Glassdoor
     - [ ] Monster
