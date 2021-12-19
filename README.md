@@ -31,7 +31,7 @@ From the Flask-SQLAlchemy documentation, you will need to run the following comm
 
 This facilitates the initial creation of the local database which will contain all queries and jobs.
 
-As of now, any desired queries must manually be added to the database using `POST` requests. The recommended tool for interacting with this API in development is [Postman](https://www.postman.com/). See this code snippet for the proper fields to include in a gived `POST` request:
+As of now, any desired queries must manually be added to the database using `POST` requests. The recommended tool for interacting with this API in development is [Postman](https://www.postman.com/). See this code snippet for the proper fields to include in a given `POST` request:
 
 ```Python
 @app.route('/query', methods=['POST'])
@@ -72,7 +72,7 @@ With all desired queries in the database and `app.py` running, simply run `scrap
 - [X] Core API functionality
 - [X] Give error if incorrect radius in a query
 - [ ] Switch from Flask-SQLAlchemy to Flask and SQLAlchemy
-- [ ] Switch from SQLite to MySQL/MariaDB for production
+- [ ] Switch from SQLite to MySQL for production
 - [ ] Address webscraping failure when using `headless` option for Selenium
 - [ ] Add support for other job listing websites
     - [ ] Glassdoor
