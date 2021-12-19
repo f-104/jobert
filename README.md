@@ -1,5 +1,5 @@
 <div align="center">
-  <img alt="Logo goes here" style="width: 37.5%; height: auto" src="logo.png">
+  <img alt="Logo goes here" style="width: 25%; height: auto" src="logo.png">
 </div>
 <h1 align="center">Jobert API</h1>
 <p align ="center">
