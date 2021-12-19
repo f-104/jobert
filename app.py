@@ -58,6 +58,9 @@ queries_schema = QuerySchema(many=True)
 job_schema = JobSchema()
 jobs_schema = JobSchema(many=True)
 
+# Parameters allowed by radius filter on Indeed
+radius_options = ['0', '5,', '10', '15', '25', '50', '100']
+
 # Create a Job
 @app.route('/job', methods=['POST'])
 def add_job():
@@ -82,6 +85,9 @@ def add_query():
     state = request.json['state']
     radius = request.json['radius']
     entryLevel = request.json['entryLevel']
+
+    if radius not in radius_options:
+        return f"400 Bad Request\nInvalid radius: {radius}\nRadius must be one of {radius_options}", 400
 
     new_query = Query(term=term, city=city, state=state, radius=radius, entryLevel=entryLevel)
 
@@ -150,6 +156,9 @@ def update_query(id):
     state = request.json['state']
     radius = request.json['radius']
     entryLevel = request.json['entryLevel']
+
+    if radius not in radius_options:
+        return f"400 Bad Request\nInvalid radius: {radius}\nRadius must be one of {radius_options}", 400
 
     query.term = term
     query.city = city

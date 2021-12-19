@@ -70,7 +70,7 @@ With all desired queries in the database and `app.py` running, simply run `scrap
 
 ## Roadmap
 - [X] Core API functionality
-- [ ] Give error if incorrect radius in a query
+- [X] Give error if incorrect radius in a query
 - [ ] Switch from Flask-SQLAlchemy to Flask and SQLAlchemy
 - [ ] Switch from SQLite to MySQL/MariaDB for production
 - [ ] Address webscraping failure when using `headless` option for Selenium
