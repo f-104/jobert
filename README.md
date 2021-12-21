@@ -71,13 +71,12 @@ With all desired queries in the database and `app.py` running, simply run `scrap
 ## Roadmap
 - [X] Core API functionality
 - [X] Give error if incorrect radius in a query
-- [ ] Switch from Flask-SQLAlchemy to Flask and SQLAlchemy
-- [ ] Switch from SQLite to MySQL for production
 - [X] Address webscraping failure when using `headless` option for Selenium
 - [ ] Add support for other job listing websites
     - [ ] Glassdoor
     - [ ] Monster
     - [ ] ...
+- [ ] Switch from SQLite to MySQL for production
 - [ ] Create Dockerfile for local deployment of the API
 - [ ] Create job listing aggregation website using the API with user authentication and saved queries per user
 
