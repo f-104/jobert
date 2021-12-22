@@ -139,7 +139,7 @@ class gJobs:
             try:
                 nextButton = driver.find_element(By.CSS_SELECTOR, 'a[data-test="pagination-next"]')
                 nextButton.click()
-            finally:
+            except:
                 driver.quit()
                 return glassdoor_jobs
 

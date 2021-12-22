@@ -84,7 +84,7 @@ class iJobs:
             try:
                 nextButton = driver.find_element(By.XPATH, '//*[@id="resultsCol"]/nav/div/ul/li[4]/a')
                 nextButton.click()
-            except NoSuchElementException:
+            except:
                 driver.quit()
                 return indeed_jobs
 
