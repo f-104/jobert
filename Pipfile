@@ -12,6 +12,7 @@ requests = "*"
 bs4 = "*"
 selenium = "*"
 lxml = "*"
+python-dotenv = "*"
 
 [dev-packages]
 autopep8 = "*"
