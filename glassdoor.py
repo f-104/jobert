@@ -82,8 +82,8 @@ class gJobs:
 
         radius_options = ['0', '5,', '10', '15', '25', '50', '100']
         found = False
-        for i in range(len(radius_options)):
-            if self.radius == radius_options[i]:
+        for i,j in enumerate(radius_options):
+            if self.radius == j:
                 radius_to_add = str(i + 1)
                 radius_XPATH_full = f'{radius_XPATH_base}[{radius_to_add}]'
                 found = True
@@ -118,7 +118,7 @@ class gJobs:
             try:
                 nextButton = driver.find_element(By.CSS_SELECTOR, 'a[data-test="pagination-next"]')
                 nextButton.click()
-            except:
+            except Exception:
                 driver.quit()
                 return glassdoor_jobs
 

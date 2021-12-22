@@ -10,13 +10,13 @@ def main():
 
     i = 1
     j = len(all_queries)
-    
+
     for query_item in all_queries:
         print(f'Scraping Indeed for query {i} of {j}...')
         jobs_list_indeed = indeed.iJobs(**query_item).get()
         print(f'Scraping Glassdoor for query {i} of {j}...')
         jobs_list_glassdoor = glassdoor.gJobs(**query_item).get()
-
+        break
         jobs_url = base_url + "job"
 
         for i_job in jobs_list_indeed:
