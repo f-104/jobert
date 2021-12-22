@@ -11,13 +11,11 @@ from dotenv import load_dotenv
 import os
 import sys
 
-from helpers import HttpHelpers
-
 options = webdriver.ChromeOptions()
 options.add_argument('--ignore-certificate-errors')
 options.add_argument("--test-type")
-#options.add_argument("--window-size=1920,1080")
-#options.add_argument('headless')
+options.add_argument("--window-size=1920,1080")
+options.add_argument('headless')
 options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36")
 options.add_experimental_option('excludeSwitches', ['enable-logging'])
 options.add_argument("--disable-extensions")
@@ -27,10 +25,8 @@ gdUser = os.environ.get('gdUser')
 gdPass = os.environ.get('gdPass')
 
 class gJobs:
-    def __init__(self, city, entryLevel, id, radius, state, term):
-        self.helpers = HttpHelpers()
+    def __init__(self, city, id, radius, state, term):
         self.city = city
-        self.entryLevel = entryLevel
         self.id = id
         self.radius = radius
         self.state = state
@@ -40,13 +36,6 @@ class gJobs:
         def checkPopup():
             try:
                 closePopup = driver.find_element(By.XPATH, '//*[@id="qual_ol"]/div[1]')
-                WebDriverWait(driver, 3).until(EC.element_to_be_clickable(closePopup)).click()
-            except NoSuchElementException:
-                pass
-        
-        def checkOtherPopup():
-            try:
-                closePopup = driver.find_element(By.XPATH, '//*[@id="JAModal"]/div/div[2]/span')
                 WebDriverWait(driver, 3).until(EC.element_to_be_clickable(closePopup)).click()
             except NoSuchElementException:
                 pass
@@ -61,10 +50,7 @@ class gJobs:
         driver.implicitly_wait(1)
         user_input = driver.find_element(By.XPATH, '//*[@id="userEmail"]')
         pass_input = driver.find_element(By.XPATH, '//*[@id="userPassword"]')
-        #user_input.click()
         user_input.send_keys(gdUser)
-        #user_input.send_keys(Keys.ESCAPE)
-        #pass_input.click()
         pass_input.send_keys(gdPass)
         send_info_btn = driver.find_element(By.XPATH, '//*[@id="LoginModal"]/div/div/div[2]/div[2]/div[2]/div/div/div/div[3]/form/div[3]/div[1]/button')
         send_info_btn.click()
@@ -72,9 +58,7 @@ class gJobs:
 
         # Search for current job term
         termInputArea = driver.find_element(By.XPATH, '//*[@id="sc.keyword"]')
-        #termInputArea.click()
         termInputArea.send_keys(Keys.CONTROL, "a")
-        termInputArea.send_keys(Keys.DELETE)
         termInputArea.send_keys(self.term)
         termInputArea.send_keys(Keys.ENTER)
         checkPopup()
@@ -85,9 +69,7 @@ class gJobs:
         # Search for current job location
         cityInput = self.city + ", " + self.state
         cityInputArea = driver.find_element(By.XPATH, '//*[@id="sc.location"]')
-        #cityInputArea.click()
         cityInputArea.send_keys(Keys.CONTROL, "a")
-        cityInputArea.send_keys(Keys.DELETE)
         cityInputArea.send_keys(cityInput)
         cityInputArea.send_keys(Keys.ENTER)
         # still need to check glassdoor webpage for invalid city error
@@ -123,8 +105,6 @@ class gJobs:
         actions = ActionChains(driver)
         actions.send_keys(Keys.ESCAPE)
         actions.perform()
-
-        # entryLevel filter not applicable on Glassdoor
 
         # Parse each page and add results to list
         glassdoor_jobs = []

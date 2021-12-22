@@ -24,7 +24,6 @@ class Query(db.Model):
     city = db.Column(db.String(50))
     state = db.Column(db.String(2))
     radius = db.Column(db.String(2))
-    entryLevel = db.Column(db.Boolean())
 
     def __repr__(self):
         return '<Query %r>' % self.id
@@ -45,7 +44,7 @@ class Job(db.Model):
 # Query Schema
 class QuerySchema(ma.Schema):
     class Meta:
-        fields = ('id', 'term', 'city', 'state', 'radius', 'entryLevel')
+        fields = ('id', 'term', 'city', 'state', 'radius')
 
 # Job Schema
 class JobSchema(ma.Schema):
@@ -84,12 +83,11 @@ def add_query():
     city = request.json['city']
     state = request.json['state']
     radius = request.json['radius']
-    entryLevel = request.json['entryLevel']
 
     if radius not in radius_options:
         return f"400 Bad Request\nInvalid radius: {radius}\nRadius must be one of {radius_options}", 400
 
-    new_query = Query(term=term, city=city, state=state, radius=radius, entryLevel=entryLevel)
+    new_query = Query(term=term, city=city, state=state, radius=radius)
 
     db.session.add(new_query)
     db.session.commit()
@@ -155,7 +153,6 @@ def update_query(id):
     city = request.json['city']
     state = request.json['state']
     radius = request.json['radius']
-    entryLevel = request.json['entryLevel']
 
     if radius not in radius_options:
         return f"400 Bad Request\nInvalid radius: {radius}\nRadius must be one of {radius_options}", 400
@@ -164,7 +161,6 @@ def update_query(id):
     query.city = city
     query.state = state
     query.radius = radius
-    query.entryLevel = entryLevel
 
     db.session.commit()
 

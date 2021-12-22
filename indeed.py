@@ -8,8 +8,6 @@ from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup as bs
 import sys
 
-from helpers import HttpHelpers
-
 options = webdriver.ChromeOptions()
 options.add_argument('--ignore-certificate-errors')
 options.add_argument("--test-type")
@@ -20,10 +18,8 @@ options.add_experimental_option('excludeSwitches', ['enable-logging'])
 options.add_argument("--disable-extensions")
 
 class iJobs:
-    def __init__(self, city, entryLevel, id, radius, state, term):
-        self.helpers = HttpHelpers()
+    def __init__(self, city, id, radius, state, term):
         self.city = city
-        self.entryLevel = entryLevel
         self.id = id
         self.radius = radius
         self.state = state
@@ -42,9 +38,7 @@ class iJobs:
 
         # Search for current job term
         termInputArea = driver.find_element(By.XPATH, '//*[@id="text-input-what"]')
-        termInputArea.click()
         termInputArea.send_keys(Keys.CONTROL, "a")
-        termInputArea.send_keys(Keys.DELETE)
         termInputArea.send_keys(self.term)
         termInputArea.send_keys(Keys.ENTER)
         checkPopup()
@@ -52,9 +46,7 @@ class iJobs:
         # Search for current job location
         cityInput = self.city + ", " + self.state
         cityInputArea = driver.find_element(By.XPATH, '//*[@id="text-input-where"]')
-        cityInputArea.click()
         cityInputArea.send_keys(Keys.CONTROL, "a")
-        cityInputArea.send_keys(Keys.DELETE)
         cityInputArea.send_keys(cityInput)
         cityInputArea.send_keys(Keys.ENTER)
         # still need to check indeed webpage for invalid city error
@@ -63,10 +55,6 @@ class iJobs:
         # Apply radius filter, only get results from last day
         current_url = driver.current_url
         new_url = current_url + "&radius=" + self.radius + "&fromage=1"
-
-        # Apply entryLevel filter if applicable
-        if self.entryLevel == True:
-            new_url = new_url + "&explvl=entry_level"
             
         driver.get(new_url)
         checkPopup()
