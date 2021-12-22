@@ -75,7 +75,6 @@ With all desired queries in the database and `app.py` running, simply run `scrap
 - [ ] Add support for other job listing websites
     - [X] Glassdoor
       - [ ] Run again if stale element causes crash
-    - [ ] Monster
     - [ ] ...
 - [ ] Switch from SQLite to MySQL for production
 - [ ] Create Dockerfile for local deployment of the API
