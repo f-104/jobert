@@ -73,7 +73,8 @@ With all desired queries in the database and `app.py` running, simply run `scrap
 - [X] Give error if incorrect radius in a query
 - [X] Address webscraping failure when using `headless` option for Selenium
 - [ ] Add support for other job listing websites
-    - [ ] Glassdoor
+    - [X] Glassdoor
+      - [ ] Run again if stale element causes crash
     - [ ] Monster
     - [ ] ...
 - [ ] Switch from SQLite to MySQL for production
