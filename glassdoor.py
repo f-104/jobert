@@ -72,7 +72,6 @@ class gJobs:
         cityInputArea.send_keys(Keys.CONTROL, "a")
         cityInputArea.send_keys(cityInput)
         cityInputArea.send_keys(Keys.ENTER)
-        # still need to check glassdoor webpage for invalid city error
         checkPopup()
 
         # Apply radius filter

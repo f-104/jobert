@@ -49,7 +49,6 @@ class iJobs:
         cityInputArea.send_keys(Keys.CONTROL, "a")
         cityInputArea.send_keys(cityInput)
         cityInputArea.send_keys(Keys.ENTER)
-        # still need to check indeed webpage for invalid city error
         checkPopup()
 
         # Apply radius filter, only get results from last day
