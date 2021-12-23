@@ -8,6 +8,9 @@ from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup as bs
 import sys
 
+import logging
+logger = logging.getLogger(__name__)
+
 options = webdriver.ChromeOptions()
 options.add_argument('--ignore-certificate-errors')
 options.add_argument("--test-type")
@@ -26,9 +29,6 @@ class iJobs:
         self.term = term
 
     def get(self):
-        driver = webdriver.Chrome(options=options)
-        driver.get("https://indeed.com")
-
         def checkPopup():
             try:
                 closePopup = driver.find_element(By.XPATH, '/html/body/div[5]/div[1]/button')
@@ -36,42 +36,65 @@ class iJobs:
             except NoSuchElementException:
                 pass
 
-        # Search for current job term
-        termInputArea = driver.find_element(By.XPATH, '//*[@id="text-input-what"]')
-        termInputArea.send_keys(Keys.CONTROL, "a")
-        termInputArea.send_keys(self.term)
-        termInputArea.send_keys(Keys.ENTER)
-        checkPopup()
+        driver = webdriver.Chrome(options=options)
+        
+        try:
+            driver.get("https://indeed.com")
+            checkPopup()
+        except Exception:
+            logger.exception('Unable to reach Indeed. Either Indeed is down or there is no internet connection')
+            sys.exit(1)
 
-        # Search for current job location
-        cityInput = self.city + ", " + self.state
-        cityInputArea = driver.find_element(By.XPATH, '//*[@id="text-input-where"]')
-        cityInputArea.send_keys(Keys.CONTROL, "a")
-        cityInputArea.send_keys(cityInput)
-        cityInputArea.send_keys(Keys.ENTER)
-        checkPopup()
+        attempts = 5
+        for k in range(attempts):
+            try:
+                # Search for current job term
+                termInputArea = driver.find_element(By.XPATH, '//*[@id="text-input-what"]')
+                termInputArea.send_keys(Keys.CONTROL, "a")
+                termInputArea.send_keys(self.term)
+                termInputArea.send_keys(Keys.ENTER)
+                checkPopup()
 
-        # Apply radius filter, only get results from last day
-        current_url = driver.current_url
-        new_url = current_url + "&radius=" + self.radius + "&fromage=1"
-            
-        driver.get(new_url)
-        checkPopup()
+                # Search for current job location
+                cityInput = self.city + ", " + self.state
+                cityInputArea = driver.find_element(By.XPATH, '//*[@id="text-input-where"]')
+                cityInputArea.send_keys(Keys.CONTROL, "a")
+                cityInputArea.send_keys(cityInput)
+                cityInputArea.send_keys(Keys.ENTER)
+                checkPopup()
+
+                # Apply radius filter, only get results from last day
+                current_url = driver.current_url
+                new_url = current_url + "&radius=" + self.radius + "&fromage=1"
+
+                driver.get(new_url)
+                checkPopup()
+            except Exception:
+                l = k + 1
+                if l < attempts:
+                    logger.warning(f'Selenium error: failed attempt {l} of {attempts}, trying again')
+                    continue
+                else:
+                    logger.exception('Failed to navigate website using Selenium, XPATH of one or more elements has likely changed')
+                    sys.exit(1)
+            break
 
         # Parse each page and add results to list
         indeed_jobs = []
         while True:
-            page = driver.page_source
-            if page is None:
-                sys.exit('Error downloading webpage')
-            
-            page_jobs = self.__parse_index(page)
-            indeed_jobs.extend(page_jobs)
+            try:
+                page = driver.page_source
+                page_jobs = self.__parse_index(page)
+                indeed_jobs.extend(page_jobs)
+            except Exception:
+                logger.exception('Error downloading webpage')
+                sys.exit(1)
 
             try:
                 nextButton = driver.find_element(By.XPATH, '//*[@id="resultsCol"]/nav/div/ul/li[4]/a')
                 nextButton.click()
             except Exception:
+                logger.info('Reached end of results')
                 driver.quit()
                 return indeed_jobs
 
@@ -79,14 +102,16 @@ class iJobs:
         soup = bs(htmlcontent, 'lxml')
 
         # Find all jobs on page
-        jobs_container = soup.find(attrs={"id": "mosaic-provider-jobcards"})
-        if jobs_container is None:
-            print("Error finding jobs_container\nReturning empty list")
+        try:
+            jobs_container = soup.find(attrs={"id": "mosaic-provider-jobcards"})
+        except Exception:
+            logger.error("Error finding jobs_container, returning empty list")
             return []
 
-        job_items = jobs_container.find_all('a', class_='resultWithShelf')
-        if job_items is None:
-            print("Error finding job items\nReturning empty list")
+        try:
+            job_items = jobs_container.find_all('a', class_='resultWithShelf')
+        except Exception:
+            logger.error("Error finding job items, returning empty list")
             return []
 
         # Get all job data from current page
@@ -99,6 +124,7 @@ class iJobs:
 
             # Skip invalid jobs
             if None in (title_elem_raw, company_elem_raw, loc_elem_raw, url_elem_raw):
+                logger.info("Skipped invalid job")
                 continue
 
             # Clean data

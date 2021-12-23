@@ -73,6 +73,7 @@ With all desired queries in the database and `app.py` running, simply run `scrap
 - [X] Give error if incorrect radius in a query
 - [X] Address webscraping failure when using `headless` option for Selenium
 - [X] Add support for Glassdoor
+- [X] Implement logging to a file
 - [ ] Switch from SQLite to MySQL for production
 - [ ] Create Dockerfile for local deployment of the API
 - [ ] Create job listing aggregation website using the API with user authentication and saved queries per user

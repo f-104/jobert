@@ -1,9 +1,15 @@
 import requests
+import logging
 import indeed
 import glassdoor
 
 # Run scraping functions for Indeed and Glassdoor using each query in the database, then post jobs to database
 def main():
+    level = logging.DEBUG
+    fmt = '[%(levelname)s] %(asctime)s - %(message)s'
+    logging.basicConfig(filename='jobert-scrape.log', level=level, format=fmt, filemode='w')
+    logger = logging.getLogger(__name__)
+
     base_url = "http://127.0.0.1:5000/"
     queryResponseRaw = requests.get(base_url + "query")
     all_queries = queryResponseRaw.json()
@@ -12,11 +18,10 @@ def main():
     j = len(all_queries)
 
     for query_item in all_queries:
-        print(f'Scraping Indeed for query {i} of {j}...')
+        logger.info(f'Scraping Indeed for query {i} of {j}...')
         jobs_list_indeed = indeed.iJobs(**query_item).get()
-        print(f'Scraping Glassdoor for query {i} of {j}...')
+        logger.info(f'Scraping Glassdoor for query {i} of {j}...')
         jobs_list_glassdoor = glassdoor.gJobs(**query_item).get()
-        break
         jobs_url = base_url + "job"
 
         for i_job in jobs_list_indeed:
@@ -29,7 +34,7 @@ def main():
 
         i += 1
     
-    print("All jobs posted for this cycle")
+    logger.info("All jobs posted for this cycle")
 
 if __name__ == '__main__':
     main()

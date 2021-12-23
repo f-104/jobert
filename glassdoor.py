@@ -11,6 +11,9 @@ from dotenv import load_dotenv
 import os
 import sys
 
+import logging
+logger = logging.getLogger(__name__)
+
 options = webdriver.ChromeOptions()
 options.add_argument('--ignore-certificate-errors')
 options.add_argument("--test-type")
@@ -41,84 +44,104 @@ class gJobs:
                 pass
 
         driver = webdriver.Chrome(options=options)
-        driver.get("https://glassdoor.com")
-        checkPopup()
 
-        # Login to Glassdoor
-        login_btn = driver.find_element(By.XPATH, '//*[@id="SiteNav"]/nav/div[2]/div/div/div/button')
-        login_btn.click()
-        driver.implicitly_wait(1)
-        user_input = driver.find_element(By.XPATH, '//*[@id="userEmail"]')
-        pass_input = driver.find_element(By.XPATH, '//*[@id="userPassword"]')
-        user_input.send_keys(gdUser)
-        pass_input.send_keys(gdPass)
-        send_info_btn = driver.find_element(By.XPATH, '//*[@id="LoginModal"]/div/div/div[2]/div[2]/div[2]/div/div/div/div[3]/form/div[3]/div[1]/button')
-        send_info_btn.click()
-        checkPopup()
+        try:
+            driver.get("https://glassdoor.com")
+            checkPopup()
+        except Exception:
+            logger.exception('Unable to reach Glassdoor. Either Glassdoor is down or there is no internet connection')
+            sys.exit(1)
 
-        # Search for current job term
-        termInputArea = driver.find_element(By.XPATH, '//*[@id="sc.keyword"]')
-        termInputArea.send_keys(Keys.CONTROL, "a")
-        termInputArea.send_keys(self.term)
-        termInputArea.send_keys(Keys.ENTER)
-        checkPopup()
-        jobs_link = driver.find_element(By.XPATH, '//*[@id="Discover"]/div/div/div[1]/div[1]/div[3]/a')
-        jobs_link.click()
-        checkPopup()
+        attempts = 5
+        for k in range(attempts):
+            try:
+                # Login to Glassdoor
+                login_btn = driver.find_element(By.XPATH, '//*[@id="SiteNav"]/nav/div[2]/div/div/div/button')
+                login_btn.click()
+                driver.implicitly_wait(1)
+                user_input = driver.find_element(By.XPATH, '//*[@id="userEmail"]')
+                pass_input = driver.find_element(By.XPATH, '//*[@id="userPassword"]')
+                user_input.send_keys(gdUser)
+                pass_input.send_keys(gdPass)
+                send_info_btn = driver.find_element(By.XPATH, '//*[@id="LoginModal"]/div/div/div[2]/div[2]/div[2]/div/div/div/div[3]/form/div[3]/div[1]/button')
+                send_info_btn.click()
+                checkPopup()
 
-        # Search for current job location
-        cityInput = self.city + ", " + self.state
-        cityInputArea = driver.find_element(By.XPATH, '//*[@id="sc.location"]')
-        cityInputArea.send_keys(Keys.CONTROL, "a")
-        cityInputArea.send_keys(cityInput)
-        cityInputArea.send_keys(Keys.ENTER)
-        checkPopup()
+                # Search for current job term
+                termInputArea = driver.find_element(By.XPATH, '//*[@id="sc.keyword"]')
+                termInputArea.send_keys(Keys.CONTROL, "a")
+                termInputArea.send_keys(self.term)
+                termInputArea.send_keys(Keys.ENTER)
+                checkPopup()
+                jobs_link = driver.find_element(By.XPATH, '//*[@id="Discover"]/div/div/div[1]/div[1]/div[3]/a')
+                jobs_link.click()
+                checkPopup()
 
-        # Apply radius filter
-        radius_dropdown = driver.find_element(By.XPATH, '//*[@id="filter_radius"]')
-        radius_dropdown.click()
-        radius_XPATH_base = '//*[@id="PrimaryDropdown"]/ul/li'
-        radius_XPATH_full = ''
+                # Search for current job location
+                cityInput = self.city + ", " + self.state
+                cityInputArea = driver.find_element(By.XPATH, '//*[@id="sc.location"]')
+                cityInputArea.send_keys(Keys.CONTROL, "a")
+                cityInputArea.send_keys(cityInput)
+                cityInputArea.send_keys(Keys.ENTER)
+                checkPopup()
 
-        radius_options = ['0', '5,', '10', '15', '25', '50', '100']
-        found = False
-        for i,j in enumerate(radius_options):
-            if self.radius == j:
-                radius_to_add = str(i + 1)
-                radius_XPATH_full = f'{radius_XPATH_base}[{radius_to_add}]'
-                found = True
-                break
-        if not found:
-            sys.exit('Error: invalid radius')
+                # Apply radius filter
+                radius_dropdown = driver.find_element(By.XPATH, '//*[@id="filter_radius"]')
+                radius_dropdown.click()
+                radius_XPATH_base = '//*[@id="PrimaryDropdown"]/ul/li'
+                radius_XPATH_full = ''
 
-        radius_to_click = driver.find_element(By.XPATH, radius_XPATH_full)
-        radius_to_click.click()
+                radius_options = ['0', '5,', '10', '15', '25', '50', '100']
+                found = False
+                for i,j in enumerate(radius_options):
+                    if self.radius == j:
+                        radius_to_add = str(i + 1)
+                        radius_XPATH_full = f'{radius_XPATH_base}[{radius_to_add}]'
+                        found = True
+                        break
+                if not found:
+                    logger.error('Invalid radius')
+                    sys.exit(1)
 
-        # Get results from last day only
-        time_dropdown = driver.find_element(By.XPATH, '//*[@id="filter_fromAge"]')
-        time_dropdown.click()
-        last_day = driver.find_element(By.XPATH, '//*[@id="PrimaryDropdown"]/ul/li[2]')
-        last_day.click()
+                radius_to_click = driver.find_element(By.XPATH, radius_XPATH_full)
+                radius_to_click.click()
 
-        # Close a popup not covered by checkPopup()
-        actions = ActionChains(driver)
-        actions.send_keys(Keys.ESCAPE)
-        actions.perform()
+                # Get results from last day only
+                time_dropdown = driver.find_element(By.XPATH, '//*[@id="filter_fromAge"]')
+                time_dropdown.click()
+                last_day = driver.find_element(By.XPATH, '//*[@id="PrimaryDropdown"]/ul/li[2]')
+                last_day.click()
+
+                # Close a popup not covered by checkPopup()
+                actions = ActionChains(driver)
+                actions.send_keys(Keys.ESCAPE)
+                actions.perform()
+            except Exception:
+                l = k + 1
+                if l < attempts:
+                    logger.warning(f'Selenium error: failed attempt {l} of {attempts}, trying again')
+                    continue
+                else:
+                    logger.exception('Failed to navigate website using Selenium, XPATH of one or more elements has likely changed')
+                    sys.exit(1)
+            break
 
         # Parse each page and add results to list
         glassdoor_jobs = []
         while True:
-            page = driver.page_source
-            if page is None:
-                sys.exit('Error downloading webpage')
+            try:
+                page = driver.page_source
+                page_jobs = self.__parse_index(page)
+                glassdoor_jobs.extend(page_jobs)
+            except Exception:
+                logger.exception('Error downloading webpage')
+                sys.exit(1)
             
-            page_jobs = self.__parse_index(page)
-            glassdoor_jobs.extend(page_jobs)
-
             try:
                 nextButton = driver.find_element(By.CSS_SELECTOR, 'a[data-test="pagination-next"]')
                 nextButton.click()
             except Exception:
+                logger.info('Reached end of results')
                 driver.quit()
                 return glassdoor_jobs
 
@@ -126,14 +149,16 @@ class gJobs:
         soup = bs(htmlcontent, 'lxml')
 
         # Find all jobs on page
-        jobs_container = soup.find(attrs={"id": "MainCol"})
-        if jobs_container is None:
-            print("Error finding jobs_container\nReturning empty list")
+        try:
+            jobs_container = soup.find(attrs={"id": "MainCol"})
+        except Exception:
+            logger.error("Error finding jobs_container, returning empty list")
             return []
 
-        job_items = jobs_container.find_all(class_='react-job-listing')
-        if job_items is None:
-            print("Error finding job items\nReturning empty list")
+        try:
+            job_items = jobs_container.find_all(class_='react-job-listing')
+        except Exception:
+            logger.error("Error finding job items, returning empty list")
             return []
 
         # Get all job data from current page
@@ -146,6 +171,7 @@ class gJobs:
 
             # Skip invalid jobs
             if None in (title_elem_raw, company_elem_raw, loc_elem_raw, url_elem_raw):
+                logger.info('Skipped invalid job')
                 continue
 
             # Clean data
