@@ -31,7 +31,7 @@ From the Flask-SQLAlchemy documentation, you will need to run the following comm
 
 This facilitates the initial creation of the local database which will contain all queries and jobs.
 
-As of now, any desired queries must manually be added to the database using `POST` requests. The recommended tool for interacting with this API in development is [Postman](https://www.postman.com/). See this code snippet for the proper fields to include in a given `POST` request:
+Queries can be added to the database through `POST` requests. The recommended tool for interacting with this API in development is [Postman](https://www.postman.com/). See this code snippet for the proper fields to include in a given `POST` request:
 
 ```Python
 @app.route('/query', methods=['POST'])
@@ -40,33 +40,23 @@ def add_query():
     city = request.json['city'] # string
     state = request.json['state'] # two-character string
     radius = request.json['radius'] # two-character string
-    entryLevel = request.json['entryLevel'] # boolean
     ...
 ```
 
 Recall that `app.py` must be running in order to send any requests.
 
-Note that `radius` must be chosen from one of the given options among Indeed's filters. Otherwise, there is a risk of this filter not being applied and potentially of other filters not being applied as well. In the production website, all radius options will be given in a dropdown list to prevent this issue.
+Note that `radius` must be chosen from one of the given options among Indeed's filters. Otherwise, there is a risk of this filter not being applied and potentially of other filters not being applied as well. Query `POST`/`PUT` requests containing an invalid choice of radius are refused.
 
-By default, `indeed.py` searches for results from the past day. If a different range is desired, please modify the `fromage` variable from line 63 in accordance with the options provided by Indeed:
-
-```Python
-...
-new_url = current_url + "&radius=" + self.radius + "&fromage=1"
-...
-```
-
-With all desired queries in the database and `app.py` running, simply run `scrape.py` and wait. A browser window will appear where the searches can be visible, however this will be removed in a future update. Note that the provided implementation of `scrape.py` exists purely for development purposes. Without modification, this file will address only the first query in the database and print all results to the console before submitting `POST` requests for each job. Jobs will then be accessible from `db.sqlite`.
+With all desired queries in the database and `app.py` running, simply run `scrape.py` and wait. This relies upon `indeed.py` and `glassdoor.py` to scrape all valid results for a given query posted to those websites in the past day. Debugging information is logged to `jobert-scrape.log`. Recommended usage is to deploy on a local device or VPS and utilize `cron` to clear the database of stale jobs and run `scrape.py` daily.
 
 ## Warnings
-- Keep in mind that `debug` is set to `true` in `app.py` during development:
+- Keep in mind that `debug` is set to `True` in `app.py`. This should be set to `False` in production:
 
     ```Python
     if __name__ == '__main__':
         app.run(debug=True)
     ```
-- It is recommended that the `job` table be emptied at the end of every `fromage` cycle (1 day by default). On the production server, such behavior will be automated.
-- Be mindful of any issues which may be encountered when altering `radius` and `fromage`, as mentioned in [Usage](#Usage).
+- This version of the API usis SQLite in order to provide a ready-to-use implementation for those who wish to clone the repository and use Jobert 'as is.' A more secure alternative such as MySQL, MariaDB, or PostgreSQL is recommended for production use.
 
 ## Roadmap
 - [X] Core API functionality
@@ -74,9 +64,8 @@ With all desired queries in the database and `app.py` running, simply run `scrap
 - [X] Address webscraping failure when using `headless` option for Selenium
 - [X] Add support for Glassdoor
 - [X] Implement logging to a file
-- [ ] Switch from SQLite to MySQL for production
+- [X] Switch from SQLite to MySQL for production (See [Warnings](#Warnings))
 - [ ] Create Dockerfile for local deployment of the API
-- [ ] Create job listing aggregation website using the API with user authentication and saved queries per user
 
 ## Contributing
 Webscraping applications are fequently broken by website updates. If you are the first to notice such an event here, please feel free to address it and submit a pull request. Similarly, you are welcome to work on any [Roadmap](#Roadmap) tasks which remain incomplete.
