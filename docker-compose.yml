@@ -1,0 +1,40 @@
+version: '3'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: ./docker/app/Dockerfile
+    ports:
+      - 8080:8080
+    depends_on:
+      - mysql
+  prep:
+    build:
+      context: .
+      dockerfile: ./docker/prep/Dockerfile
+    depends_on:
+      - app
+  scrape:
+    build:
+      context: .
+      dockerfile: ./docker/scrape/Dockerfile
+    depends_on:
+      - prep
+      - sel
+  sel:
+    image: selenium/standalone-chrome
+    ports:
+      - 4444:4444
+  mysql:
+    image: mysql
+    ports:
+      - 3307:3306
+    cap_add:
+    - SYS_NICE
+    environment:
+      MYSQL_ROOT_PASSWORD: hobbes
+      MYSQL_DATABASE: jobertdb
+    volumes:
+      - db-data:/var/lib/mysql
+volumes:
+  db-data:

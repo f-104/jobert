@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import requests
 import logging
 import indeed
@@ -7,10 +8,10 @@ import glassdoor
 def main():
     level = logging.DEBUG
     fmt = '[%(levelname)s] %(asctime)s - %(message)s'
-    logging.basicConfig(filename='jobert-scrape.log', level=level, format=fmt, filemode='w')
+    logging.basicConfig(filename='/jobert/scrape.log', level=level, format=fmt, filemode='w')
     logger = logging.getLogger(__name__)
 
-    base_url = "http://127.0.0.1:5000/"
+    base_url = "http://app:8080/"
     queryResponseRaw = requests.get(base_url + "query")
     all_queries = queryResponseRaw.json()
 
@@ -24,12 +25,12 @@ def main():
         jobs_list_glassdoor = glassdoor.gJobs(**query_item).get()
         jobs_url = base_url + "job"
 
+        logger.info(f'Posting Indeed jobs for query {i} of {j}...')
         for i_job in jobs_list_indeed:
-            print(f'Posting Indeed jobs for query {i} of {j}...')
             send_job = requests.post(jobs_url, json=i_job)
 
+        logger.info(f'Posting Glassdoor jobs for query {i} of {j}...')
         for g_job in jobs_list_glassdoor:
-            print(f'Posting Glassdoor jobs for query {i} of {j}...')
             send_job = requests.post(jobs_url, json=g_job)
 
         i += 1

@@ -19,6 +19,9 @@ options.add_argument('headless')
 options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36")
 options.add_experimental_option('excludeSwitches', ['enable-logging'])
 options.add_argument("--disable-extensions")
+options.add_argument("--no-sandbox")
+options.add_argument("--disable-dev-shm-usage")
+options.add_argument("--whitelisted-ips")
 
 class iJobs:
     def __init__(self, city, id, radius, state, term):
@@ -36,7 +39,7 @@ class iJobs:
             except NoSuchElementException:
                 pass
 
-        driver = webdriver.Chrome(options=options)
+        driver = webdriver.Remote("http://sel:4444/wd/hub", options=options)
         
         try:
             driver.get("https://indeed.com")

@@ -1,5 +1,6 @@
-*.sqlite
 __pycache__
 *.psd
 *.env
 *.log
+Pipfile
+Pipfile.lock

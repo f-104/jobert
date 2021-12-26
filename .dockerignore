@@ -1,0 +1,10 @@
+__pycache__
+*.psd
+*.png
+*.log
+.gitignore
+README.md
+LICENSE
+Pipfile
+Pipfile.lock
+requirements.txt

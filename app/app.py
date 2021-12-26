@@ -5,10 +5,7 @@ import os
 
 # Init app
 app = Flask(__name__)
-basedir = os.path.abspath(os.path.dirname(__file__))
-
-# Database - Change to MySQL/MariaDB
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'db.sqlite')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:hobbes@mysql:3306/jobertdb'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Init db
@@ -34,7 +31,7 @@ class Job(db.Model):
     title = db.Column(db.String(100), nullable=False)
     company = db.Column(db.String(100), nullable=False)
     location = db.Column(db.String(100), nullable=False)
-    href = db.Column(db.String(100), nullable=False)
+    href = db.Column(db.String(5000), nullable=False)
     query_rel = db.relationship('Query', backref=db.backref('jobs', lazy=True))
     query_id = db.Column(db.Integer, db.ForeignKey('query.id'), nullable=False)
 
@@ -186,4 +183,6 @@ def delete_query(id):
 
 # Run server
 if __name__ == '__main__':
-    app.run(debug=True)
+    #app.run(debug=True)
+    from waitress import serve
+    serve(app, host="0.0.0.0", port=8080)

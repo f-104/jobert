@@ -6,6 +6,8 @@
   The Jobert API is a RESTful API which aims to automate mass execution of job searches.
 </p>
 
+__WARNING: This README file is outdated and will be replaced within a couple of days.__
+
 ### Table of Contents
 - [Summary](#Summary)
 - [Usage](#Usage)
@@ -20,16 +22,16 @@ The Jobert API is meant to take in queries, run searches, and provide results, a
 This project is loosely based on [Job Search Automation Software](https://github.com/f-104/jsas) and will be prioritized in terms of maintenance.
 
 ## Usage
-First, see the `Pipfile` and ensure all dependencies are met. Also note that the appropriate Webdriver for Selenium is required. For users of Google Chrome, [Chromedriver](https://chromedriver.chromium.org/downloads) is recommended.
+First, see the `Pipfile` and ensure all dependencies are met. Also note that the appropriate Webdriver for Selenium is required. For users of Google Chrome, [Chromedriver](https://chromedriver.chromium.org/downloads) is recommended. Finally, note that login credentials for Glassdoor are expected to be stored in `.env` as `gdUser` and `gdPass`. This is required and not provided here.
 
 From the Flask-SQLAlchemy documentation, you will need to run the following commands in the root directory of the project once:
 
 ```Python
->>> from yourapplication import db
+>>> from app import db
 >>> db.create_all()
 ```
 
-This facilitates the initial creation of the local database which will contain all queries and jobs.
+This facilitates the initial creation of the local database which will contain all queries and jobs. These commands have been added to `prep.py` for convenience and for use in the Dockerfile.
 
 Queries can be added to the database through `POST` requests. The recommended tool for interacting with this API in development is [Postman](https://www.postman.com/). See this code snippet for the proper fields to include in a given `POST` request:
 
