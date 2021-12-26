@@ -7,7 +7,7 @@
 </p>
 <div align="center">
   <a href="LICENSE"><img alt="License badge" src="https://img.shields.io/github/license/f-104/jobert-api?color=blue"></a>
-  <a href="https://github.com/tzipor/jsas/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues/f-104/jobert-api?color=blue"></a>
+  <a href="https://github.com/f-104/jobert-api/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues/f-104/jobert-api?color=blue"></a>
   <img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/f-104/jobert-api?color=blue">
   <a href="https://github.com/f-104/jobert-api/releases/tag/v1.0.0"><img alt="GitHub Release" src="https://img.shields.io/github/v/release/f-104/jobert-api?color=blue&include_prereleases"></a>
   <img alt="Python Version" src="https://img.shields.io/badge/python-3.9%2B-blue">
