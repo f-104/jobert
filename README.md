@@ -3,62 +3,98 @@
 </div>
 <h1 align="center">Jobert API</h1>
 <p align ="center">
-  The Jobert API is a RESTful API which aims to automate mass execution of job searches.
+  The Jobert API is a RESTful API created to automate mass execution of job searches.
 </p>
-
-__WARNING: This README file is outdated and will be replaced within a couple of days.__
 
 ### Table of Contents
 - [Summary](#Summary)
 - [Usage](#Usage)
-- [Warnings](#Warnings)
 - [Roadmap](#Roadmap)
 - [Contributing](#Contributing)
 - [License](#License)
 
 ## Summary
-The Jobert API is meant to take in queries, run searches, and provide results, although it is a complete CRUD application. The end goal here is to use this API on the backend of a simplified job search website to save non-technical users massive amounts of time.
+The Jobert API is meant to take in queries, automate job searches, and regularly provide results, although it is a complete CRUD application for both queries and jobs independent of each other. The end goal is to use this API on the backend of a simplified job search website to save non-technical users massive amounts of time. In its current iteration, Jobert is intended for use in a home server or VPS environment.
 
-This project is loosely based on [Job Search Automation Software](https://github.com/f-104/jsas) and will be prioritized in terms of maintenance.
+This project is loosely based on [Job Search Automation Software](https://github.com/f-104/jsas) and takes priority regarding development.
 
 ## Usage
-First, see the `Pipfile` and ensure all dependencies are met. Also note that the appropriate Webdriver for Selenium is required. For users of Google Chrome, [Chromedriver](https://chromedriver.chromium.org/downloads) is recommended. Finally, note that login credentials for Glassdoor are expected to be stored in `.env` as `gdUser` and `gdPass`. This is required and not provided here.
+The preferred method of running the Jobert API is to use Docker. Instructions for standalone use are provided below as well. In any case, the first step is to download the most recent release and create the file `.env` in the `scrape` folder:
 
-From the Flask-SQLAlchemy documentation, you will need to run the following commands in the root directory of the project once:
-
-```Python
->>> from app import db
->>> db.create_all()
+```python
+# scrape/.env
+# Glassdoor Credentials go here
+gdUser = "Paste Glassdoor email here"
+gdPass = "Paste Glassdoor password here"
 ```
 
-This facilitates the initial creation of the local database which will contain all queries and jobs. These commands have been added to `prep.py` for convenience and for use in the Dockerfile.
+### Docker (Preferred)
+By default, Jobert will scrape Indeed and Glassdoor for new jobs based on all stored queries at 12:00 UTC every day. If a different schedule is desired, please modify the CronJob in `docker/scrape/Dockerfile`, line 14, as necessary.
 
-Queries can be added to the database through `POST` requests. The recommended tool for interacting with this API in development is [Postman](https://www.postman.com/). See this code snippet for the proper fields to include in a given `POST` request:
+From `docker-compose.yml`, ports 3307, 4444, and 8080 are required. Ensuring that Docker is installed and these ports are free, run these commands to pull the necessary images:
 
-```Python
-@app.route('/query', methods=['POST'])
-def add_query():
-    term = request.json['term'] # string
-    city = request.json['city'] # string
-    state = request.json['state'] # two-character string
-    radius = request.json['radius'] # two-character string
-    ...
+```
+docker-compose pull sel
+docker-compose pull mysql
 ```
 
-Recall that `app.py` must be running in order to send any requests.
+At this point, you can use docker-compose to start Jobert:
 
-Note that `radius` must be chosen from one of the given options among Indeed's filters. Otherwise, there is a risk of this filter not being applied and potentially of other filters not being applied as well. Query `POST`/`PUT` requests containing an invalid choice of radius are refused.
+```
+docker-compose up
+```
 
-With all desired queries in the database and `app.py` running, simply run `scrape.py` and wait. This relies upon `indeed.py` and `glassdoor.py` to scrape all valid results for a given query posted to those websites in the past day. Debugging information is logged to `jobert-scrape.log`. Recommended usage is to deploy on a local device or VPS and utilize `cron` to clear the database of stale jobs and run `scrape.py` daily.
+The Jobert API is now running.
 
-## Warnings
-- Keep in mind that `debug` is set to `True` in `app.py`. This should be set to `False` in production:
+### Standalone
 
-    ```Python
-    if __name__ == '__main__':
-        app.run(debug=True)
-    ```
-- This version of the API usis SQLite in order to provide a ready-to-use implementation for those who wish to clone the repository and use Jobert 'as is.' A more secure alternative such as MySQL, MariaDB, or PostgreSQL is recommended for production use.
+First, with Python installed, run `pip install -r requirements.txt` to install necessary Python modules. Also note that the appropriate Webdriver for Selenium is required. For users of Google Chrome, [Chromedriver](https://chromedriver.chromium.org/downloads) is recommended.
+
+As Jobert is designed for use with docker-compose, some lines will need to be modified in order for it to function on its own:
+
+| File                    | Line  | Modification                                |
+|-------------------------|-------|---------------------------------------------|
+| `app/app.py`            | `7`   | Change database URI                         |
+| `scrape/scrape.py`      | `11`  | Change directory in `filename`              |
+| `scrape/scrape.py`      | `14`  | Change base_url to `http://localhost:8080/` |
+| `scrape/indeed.py`      | `42`  | Change webdriver type, remove URL argument  |
+| `scrape/glassdoor.py`   | `49`  | Change webdriver type, remove URL argument  |
+
+For the database URI in `app.py`, you will need to ensure a SQL RDBMS is already installed and configured on the host system. Such configuration is beyond the scope of these instructions.
+
+Regarding modifications to `indeed.py` and `glassdoor.py`, here is an example for Chrome users:
+
+```Python
+driver = webdriver.Chrome(options=options)
+```
+
+Now with configuration out of the way, run `app/prep.py` once. This file can then be discarded.
+
+The Jobert API is now installed on the host system. Scraping may be automated, or the user may run `scrape/scrape.py` when required. `app/app.py` must be running at all times in order to maintain functionality.
+
+---
+
+Queries can be added to the database through `POST` requests. Provided here is an example of an acceptable `POST` request:
+
+```json
+{
+    "term": "Software Engineer",
+    "city": "New York",
+    "state": "NY",
+    "radius": "25"
+}
+```
+
+Of particular note are restrictions on the value of `radius`:
+
+```Python
+# Parameters allowed by radius filter on Indeed, Glassdoor
+radius_options = ['0', '5,', '10', '15', '25', '50', '100']
+```
+
+Query `POST`/`PUT` requests containing an invalid choice of radius are refused.
+
+Debugging information is logged to `scrape.log`. In the docker-compose implementation, this file is located at `/jobert/scrape.log` within the `scrape` container.
 
 ## Roadmap
 - [X] Core API functionality
@@ -67,10 +103,11 @@ With all desired queries in the database and `app.py` running, simply run `scrap
 - [X] Add support for Glassdoor
 - [X] Implement logging to a file
 - [X] Switch from SQLite to MySQL for production (See [Warnings](#Warnings))
-- [ ] Create Dockerfile for local deployment of the API
+- [X] Create Dockerfile for local deployment of the API
+- [ ] Delete stale jobs when script is run
 
 ## Contributing
-Webscraping applications are fequently broken by website updates. If you are the first to notice such an event here, please feel free to address it and submit a pull request. Similarly, you are welcome to work on any [Roadmap](#Roadmap) tasks which remain incomplete.
+Webscraping applications are fequently broken by website updates. If you are the first to notice such an event here, please feel free to address it and submit a pull request. Similarly, all are welcome to work on any [Roadmap](#Roadmap) tasks which remain incomplete.
 
 ## License
 All original software is licensed under the GPL-3.0 license. You are bound to the Terms of Service of any other websites with which you may interact while using this software. [Developer](https://github.com/f-104) does not support Terms of Service violations.

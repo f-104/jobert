@@ -1,7 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
-import os
 
 # Init app
 app = Flask(__name__)
@@ -54,7 +53,7 @@ queries_schema = QuerySchema(many=True)
 job_schema = JobSchema()
 jobs_schema = JobSchema(many=True)
 
-# Parameters allowed by radius filter on Indeed
+# Parameters allowed by radius filter on Indeed, Glassdoor
 radius_options = ['0', '5,', '10', '15', '25', '50', '100']
 
 # Create a Job
@@ -183,6 +182,5 @@ def delete_query(id):
 
 # Run server
 if __name__ == '__main__':
-    #app.run(debug=True)
     from waitress import serve
     serve(app, host="0.0.0.0", port=8080)
