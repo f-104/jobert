@@ -16,7 +16,6 @@
 ### Table of Contents
 - [Summary](#Summary)
 - [Usage](#Usage)
-- [Roadmap](#Roadmap)
 - [Contributing](#Contributing)
 - [License](#License)
 
@@ -105,17 +104,8 @@ Debugging information is logged to `scrape.log`. In the Docker implementation, t
 
 It is recommended in most cases that older jobs be periodically removed from the `job` table within the database. If such functionality is desired, the simplest way to accomplish this would be to utilize the [MySQL Event Scheduler](https://dev.mysql.com/doc/refman/5.7/en/event-scheduler.html) within the MySQL Docker container.
 
-## Roadmap
-- [X] Core API functionality
-- [X] Give error if incorrect radius in a query
-- [X] Address webscraping failure when using `headless` option for Selenium
-- [X] Add support for Glassdoor
-- [X] Implement logging to a file
-- [X] Switch from SQLite to MySQL for production (See [Warnings](#Warnings))
-- [X] Create Dockerfile for local deployment of the API
-
 ## Contributing
-Webscraping applications are fequently broken by website updates. If you are the first to notice such an event here, please feel free to address it and submit a pull request. Similarly, all are welcome to work on any [Roadmap](#Roadmap) tasks which remain incomplete.
+Webscraping applications are fequently broken by website updates. If you are the first to notice such an event here, please feel free to open an issue or to address it and submit a pull request.
 
 ## License
 All original software is licensed under the GPL-3.0 license. You are bound to the Terms of Service of any other websites with which you may interact while using this software. [Developer](https://github.com/f-104) does not support Terms of Service violations.
