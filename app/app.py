@@ -54,7 +54,7 @@ job_schema = JobSchema()
 jobs_schema = JobSchema(many=True)
 
 # Parameters allowed by radius filter on Indeed, Glassdoor
-radius_options = ['0', '5,', '10', '15', '25', '50', '100']
+radius_options = ['0', '5', '10', '15', '25', '50', '100']
 
 # Create a Job
 @app.route('/job', methods=['POST'])

@@ -95,7 +95,7 @@ Of particular note are restrictions on the value of `radius`:
 
 ```Python
 # Parameters allowed by radius filter on Indeed, Glassdoor
-radius_options = ['0', '5,', '10', '15', '25', '50', '100']
+radius_options = ['0', '5', '10', '15', '25', '50', '100']
 ```
 
 Query `POST`/`PUT` requests containing an invalid choice of radius are refused.

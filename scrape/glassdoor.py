@@ -94,7 +94,7 @@ class gJobs:
                 radius_XPATH_base = '//*[@id="PrimaryDropdown"]/ul/li'
                 radius_XPATH_full = ''
 
-                radius_options = ['0', '5,', '10', '15', '25', '50', '100']
+                radius_options = ['0', '5', '10', '15', '25', '50', '100']
                 found = False
                 for i,j in enumerate(radius_options):
                     if self.radius == j:
