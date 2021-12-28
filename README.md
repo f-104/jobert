@@ -80,7 +80,7 @@ The Jobert API is now installed on the host system. Scraping may be automated, o
 
 ---
 
-Queries can be added to the database through `POST` requests. Provided here is an example of an acceptable `POST` request:
+Queries can be added to the database through `POST` requests to `/query`. Provided here is an example of an acceptable `POST` request:
 
 ```json
 {
@@ -101,6 +101,8 @@ radius_options = ['0', '5', '10', '15', '25', '50', '100']
 Query `POST`/`PUT` requests containing an invalid choice of radius are refused.
 
 Debugging information is logged to `scrape.log`. In the Docker implementation, this file is located at `/jobert/scrape.log` within the `scrape` container.
+
+Job results can be gotten through `GET` requests to `/job`. Note that each job has a `query_id` linking it to a query, so requests can filter by query.
 
 It is recommended in most cases that older jobs be periodically removed from the `job` table within the database. If such functionality is desired, the simplest way to accomplish this would be to utilize the [MySQL Event Scheduler](https://dev.mysql.com/doc/refman/5.7/en/event-scheduler.html) within the MySQL Docker container.
 
