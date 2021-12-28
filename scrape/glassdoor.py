@@ -120,9 +120,8 @@ class gJobs:
                 actions.send_keys(Keys.ESCAPE)
                 actions.perform()
             except Exception:
-                l = k + 1
-                if l < attempts:
-                    logger.warning(f'Selenium error: failed attempt {l} of {attempts}, trying again')
+                if k < attempts - 1:
+                    logger.warning(f'Selenium error: failed attempt {k + 1} of {attempts}, trying again')
                     continue
                 else:
                     logger.exception('Failed to navigate website using Selenium, XPATH of one or more elements has likely changed')
