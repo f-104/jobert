@@ -25,13 +25,19 @@ The Jobert API is meant to take in queries, automate job searches, and regularly
 This project is loosely based on [Job Search Automation Software](https://github.com/f-104/jsas) and takes priority regarding development.
 
 ## Usage
-The preferred method of running the Jobert API is to use Docker. Instructions for standalone use are provided below as well. In any case, the first step is to download the most recent release and create the file `.env` in the `scrape` folder:
+The preferred method of running the Jobert API is to use Docker. Instructions for standalone use are provided below as well. In any case, the first step is to download the most recent release and create the two files, `.env` in the `scrape` and `app` folders:
 
 ```python
 # scrape/.env
 # Glassdoor Credentials go here
 gdUser = "Paste Glassdoor email here"
 gdPass = "Paste Glassdoor password here"
+# ...
+# app/.env
+# MySQL credentials go here
+# Below are default credentials
+sql_u = "root"
+sql_p = "hobbes"
 ```
 
 ### Docker (Preferred)

@@ -1,11 +1,22 @@
+from venv import create
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+sql_u = os.environ.get('sql_u')
+sql_p = os.environ.get('sql_p')
 
 # Init app
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:hobbes@mysql:3306/jobertdb'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+def create_app():
+    app = Flask(__name__)
+    app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+mysqlconnector://{sql_u}:{sql_p}@mysql:3306/jobertdb'
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    return app
+
+app = create_app()
 
 # Init db
 db = SQLAlchemy(app)

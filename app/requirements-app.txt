@@ -3,6 +3,7 @@ flask-marshmallow==0.14.0
 Flask-SQLAlchemy==2.5.1
 marshmallow==3.14.1
 marshmallow-sqlalchemy==0.27.0
+python-dotenv==0.19.2
 SQLAlchemy==1.4.28
 waitress==2.0.0
 mysql-connector-python==8.0.27
