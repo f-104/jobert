@@ -62,11 +62,11 @@ class gJobs:
                 login_btn = driver.find_element(By.XPATH, '//*[@id="SiteNav"]/nav/div[2]/div/div/div/button')
                 login_btn.click()
                 driver.implicitly_wait(1)
-                user_input = driver.find_element(By.XPATH, '//*[@id="userEmail"]')
-                pass_input = driver.find_element(By.XPATH, '//*[@id="userPassword"]')
+                user_input = driver.find_element(By.XPATH, '//*[@id="modalUserEmail"]')
+                pass_input = driver.find_element(By.XPATH, '//*[@id="modalUserPassword"]')
                 user_input.send_keys(gdUser)
                 pass_input.send_keys(gdPass)
-                send_info_btn = driver.find_element(By.XPATH, '//*[@id="LoginModal"]/div/div/div[2]/div[2]/div[2]/div/div/div/div[3]/form/div[3]/div[1]/button')
+                send_info_btn = driver.find_element(By.XPATH, '//*[@id="LoginModal"]/div/div/div[2]/div[2]/div[2]/div/div/form/div[3]/button')
                 send_info_btn.click()
                 checkPopup()
 
@@ -76,7 +76,10 @@ class gJobs:
                 termInputArea.send_keys(self.term)
                 termInputArea.send_keys(Keys.ENTER)
                 checkPopup()
-                jobs_link = driver.find_element(By.XPATH, '//*[@id="Discover"]/div/div/div[1]/div[1]/div[3]/a')
+                try:
+                    jobs_link = driver.find_element(By.XPATH, '//*[@id="Discover"]/div/div/div[1]/div[1]/div[3]/a')
+                except:
+                    jobs_link = driver.find_element(By.XPATH, '//*[@id="Discover"]/div/div/div[1]/div[2]/div[3]/a')
                 jobs_link.click()
                 checkPopup()
 
