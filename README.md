@@ -20,9 +20,9 @@
 - [License](#License)
 
 ## Summary
-The Jobert API is meant to take in queries, automate job searches, and regularly provide results, although it is a complete CRUD application for both queries and jobs independent of each other. The end goal is to use this API on the backend of a simplified job search website to save non-technical users massive amounts of time. In its current iteration, Jobert is intended for use in a home server or VPS environment.
+The Jobert API is meant to take in queries, automate job searches, and regularly provide results, although it is a complete CRUD application for both queries and jobs independent of each other. A hypothetical end goal would be to use this API on the backend of a simplified job search website to save non-technical users massive amounts of time. In its current iteration, Jobert is ideal for use in a home server or VPS environment.
 
-This project is loosely based on [Job Search Automation Software](https://github.com/f-104/jsas) and takes priority regarding development.
+This project is loosely based on [Job Search Automation Software](https://github.com/snorper/jsas). For daily use, *JSAS* presents a more practical approach.
 
 ## Usage
 The preferred method of running the Jobert API is to use Docker. Instructions for standalone use are provided below as well. In any case, the first step is to download the most recent release and create the two files, `.env` in the `scrape` and `app` folders:
