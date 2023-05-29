@@ -1,3 +1,5 @@
+2023 Update: The Jobert name has been repurposed for a [ready-to-use website](https://jobert.app) using different technology (Vue/TS) and is not currently open source. This repository is a different project which is not maintained.
+
 <div align="center">
   <img alt="Logo goes here" style="width: 25%; height: auto" src="logo.png">
 </div>
